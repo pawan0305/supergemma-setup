@@ -35,4 +35,5 @@ echo "To switch back to real Claude: just run 'claude' normally"
 echo ""
 
 # 3. Launch Claude Code pointed at LiteLLM
-ANTHROPIC_BASE_URL=http://localhost:4000 ANTHROPIC_API_KEY=none claude "$@"
+# Unset OAuth token to avoid auth conflict, use fake API key for local
+ANTHROPIC_BASE_URL=http://localhost:4000 ANTHROPIC_API_KEY=local-supergemma claude "$@"
