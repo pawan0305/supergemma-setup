@@ -37,8 +37,8 @@ echo "Starting SuperGemma4 26B..."
 echo "  Model:    $MODEL"
 echo "  GPU layers: 18 / ~46 total (rest on CPU)"
 echo "  Context:  131072 tokens (128K, KV cache quantized to q4_0)"
-echo "  API:      http://localhost:8080/v1"
-echo "  UI:       http://localhost:8080"
+echo "  API:      http://localhost:6969/v1"
+echo "  UI:       http://localhost:6969"
 echo ""
 echo "Press Ctrl+C to stop."
 echo ""
@@ -52,5 +52,5 @@ exec "$LLAMA_DIR/build/bin/llama-server" \
   --cache-type-v q4_0 \
   -t 8 \
   --host 0.0.0.0 \
-  --port 8080 \
+  --port 6969 \
   --alias supergemma4
