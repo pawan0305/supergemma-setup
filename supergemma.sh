@@ -14,6 +14,7 @@
 #   - 18 GPU layers  → fits in 12GB VRAM
 #   - Rest on CPU RAM → ~7.4GB RAM used
 #   - Speed: ~40 tokens/sec generation, ~90 tokens/sec prompt processing
+#   - KV cache quantized to q4_0 → enables 128K context within 12GB VRAM
 # =============================================================================
 
 LLAMA_DIR="$HOME/llama.cpp"
@@ -35,7 +36,7 @@ fi
 echo "Starting SuperGemma4 26B..."
 echo "  Model:    $MODEL"
 echo "  GPU layers: 18 / ~46 total (rest on CPU)"
-echo "  Context:  8192 tokens"
+echo "  Context:  131072 tokens (128K, KV cache quantized to q4_0)"
 echo "  API:      http://localhost:8080/v1"
 echo "  UI:       http://localhost:8080"
 echo ""
@@ -46,7 +47,9 @@ exec "$LLAMA_DIR/build/bin/llama-server" \
   -m "$MODEL" \
   --chat-template-file "$TEMPLATE" \
   -ngl 18 \
-  --ctx-size 8192 \
+  --ctx-size 131072 \
+  --cache-type-k q4_0 \
+  --cache-type-v q4_0 \
   -t 8 \
   --host 0.0.0.0 \
   --port 8080 \
