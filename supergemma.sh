@@ -51,6 +51,7 @@ exec "$LLAMA_DIR/build/bin/llama-server" \
   --cache-type-k q4_0 \
   --cache-type-v q4_0 \
   -t 8 \
+  --reasoning off \
   --host 0.0.0.0 \
   --port 6969 \
   --alias supergemma4
