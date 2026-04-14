@@ -183,3 +183,21 @@ If missing, `git pull` in `~/llama.cpp` and rebuild.
 - This setup was built for **RTX 3080 Ti (12GB)**. The 16GB model doesn't fully fit in VRAM, so 18 layers go to GPU and the rest spill to RAM. Speed is still ~40 t/s.
 - With **RTX 3090 / 4090 (24GB)**: change `-ngl 18` → `-ngl 999` to load everything on GPU. Expect 60-80+ t/s.
 - With **less than 12GB VRAM**: drop `-ngl` further (try `-ngl 10`) and accept slower speeds.
+
+---
+
+## Quick Commands
+
+Add these to your shell by running `install.sh` or manually:
+
+```bash
+alias startgemma="nohup ~/supergemma.sh > /tmp/supergemma.log 2>&1 & echo SuperGemma started, PID: $!"
+alias stopgemma="pkill -f llama-server && echo SuperGemma stopped"
+alias gemmalogs="tail -f /tmp/supergemma.log"
+```
+
+| Command | Action |
+|---------|--------|
+| `startgemma` | Start server in background |
+| `stopgemma` | Kill server |
+| `gemmalogs` | Watch live logs |
