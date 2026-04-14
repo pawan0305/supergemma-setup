@@ -60,15 +60,66 @@ if [ ! -f "$TEMPLATE" ]; then
 fi
 echo "  Template found."
 
-# ── Step 5: Install startup script ───────────────────────────────────────────
+# ── Step 5: Install scripts ───────────────────────────────────────────────────
 echo ""
-echo "[5/5] Installing supergemma.sh to ~/supergemma.sh..."
-cp "$(dirname "$0")/supergemma.sh" "$HOME/supergemma.sh"
-chmod +x "$HOME/supergemma.sh"
+echo "[5/6] Installing scripts to home directory..."
+SCRIPT_DIR="$(dirname "$0")"
+cp "$SCRIPT_DIR/supergemma.sh" "$HOME/supergemma.sh"
+cp "$SCRIPT_DIR/gemmacode.sh" "$HOME/gemmacode.sh"
+cp "$SCRIPT_DIR/litellm-config.yaml" "$HOME/litellm-config.yaml"
+chmod +x "$HOME/supergemma.sh" "$HOME/gemmacode.sh"
+echo "  Scripts installed."
+
+# ── Step 6: Install Python tools & shell aliases ──────────────────────────────
+echo ""
+echo "[6/6] Installing uv, LiteLLM, Open WebUI and shell aliases..."
+
+# Install uv (Python package manager)
+if ! command -v uv &>/dev/null && [ ! -f "$HOME/.local/bin/uv" ]; then
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+export PATH="$HOME/.local/bin:$PATH"
+
+# Install LiteLLM
+uv tool install 'litellm[proxy]'
+
+# Install Open WebUI + Python 3.13 fix
+uv tool install open-webui
+uv pip install --python ~/.local/share/uv/tools/open-webui/bin/python audioop-lts 2>/dev/null || true
+
+# Add aliases to ~/.bashrc (skip if already present)
+if ! grep -q "SuperGemma shortcuts" "$HOME/.bashrc"; then
+  cat >> "$HOME/.bashrc" << 'ALIASES'
+
+# SuperGemma shortcuts
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+alias startgemma="nohup ~/supergemma.sh > /tmp/supergemma.log 2>&1 & echo SuperGemma started, PID: $!"
+alias stopgemma="pkill -f llama-server && echo SuperGemma stopped"
+alias gemmalogs="tail -f /tmp/supergemma.log"
+alias startwebui="OPENAI_API_BASE_URL=http://localhost:6969/v1 OPENAI_API_KEY=none nohup open-webui serve --port 3000 > /tmp/openwebui.log 2>&1 & echo Open WebUI started, PID: $!"
+alias stopwebui="pkill -f open-webui && echo Open WebUI stopped"
+alias startlitellm="nohup litellm --config ~/litellm-config.yaml --port 4000 > /tmp/litellm.log 2>&1 & echo LiteLLM started, PID: $!"
+alias stoplitellm="pkill -f litellm && echo LiteLLM stopped"
+alias gemmacode="~/gemmacode.sh"
+ALIASES
+  echo "  Aliases added to ~/.bashrc"
+else
+  echo "  Aliases already present in ~/.bashrc, skipping."
+fi
 
 echo ""
 echo "╔══════════════════════════════════════════════════════╗"
-echo "║  Done! Start SuperGemma4 with:  ~/supergemma.sh      ║"
-echo "║  API will be at: http://localhost:8080/v1             ║"
+echo "║  Done! Available commands (open a new terminal):     ║"
+echo "║                                                       ║"
+echo "║  startgemma   — start SuperGemma4 in background      ║"
+echo "║  stopgemma    — stop SuperGemma4                      ║"
+echo "║  gemmalogs    — watch live logs                       ║"
+echo "║  startwebui   — start Open WebUI (port 3000)          ║"
+echo "║  stopwebui    — stop Open WebUI                       ║"
+echo "║  startlitellm — start LiteLLM proxy (port 4000)      ║"
+echo "║  stoplitellm  — stop LiteLLM proxy                   ║"
+echo "║  gemmacode    — Claude Code via SuperGemma4           ║"
+echo "║                                                       ║"
+echo "║  Or run everything at once:  gemmacode               ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo ""
