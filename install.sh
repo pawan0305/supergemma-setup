@@ -1,13 +1,14 @@
 #!/bin/bash
 # =============================================================================
 # SuperGemma4 26B — Full Install Script
-# Tested on: Ubuntu 24.04, RTX 3080 Ti 12GB VRAM, 32GB RAM, CUDA 12.4
+# Tested on: Ubuntu 24.04, RTX 3090 24GB VRAM, 32GB RAM, CUDA 12.4
+# Note: Part of ~/Local LLM setup. Run ~/Local LLM/install.sh for full setup.
 # =============================================================================
 
 set -e
 
-MODELS_DIR="$HOME/models/supergemma4"
-LLAMA_DIR="$HOME/llama.cpp"
+MODELS_DIR="$HOME/Local LLM/models/supergemma4"
+LLAMA_DIR="$HOME/Local LLM/llama.cpp"
 MODEL_FILE="supergemma4-26b-Q4_K_M.gguf"
 MODEL_URL="https://huggingface.co/Jiunsong/supergemma4-26b-uncensored-gguf-v2/resolve/main/supergemma4-26b-uncensored-fast-v2-Q4_K_M.gguf"
 
